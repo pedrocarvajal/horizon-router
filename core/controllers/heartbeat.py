@@ -1,9 +1,9 @@
 import json
 from rest_framework.decorators import api_view
 from cerberus import Validator
-from core.models.Heartbeat import Heartbeat
-from core.models.Account import Account
-from core.models.Strategy import Strategy
+from core.models.heartbeat import Heartbeat
+from core.models.account import Account
+from core.models.strategy import Strategy
 from core.helpers.response import response
 
 
