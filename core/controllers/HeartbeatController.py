@@ -1,10 +1,10 @@
 import json
 from rest_framework.decorators import api_view
 from cerberus import Validator
-from models.Heartbeat import Heartbeat
-from models.Account import Account
-from models.Strategy import Strategy
-from helpers.response import response
+from core.models.Heartbeat import Heartbeat
+from core.models.Account import Account
+from core.models.Strategy import Strategy
+from core.helpers.response import response
 
 
 @api_view(["POST"])
