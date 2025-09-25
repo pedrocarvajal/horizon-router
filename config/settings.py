@@ -36,8 +36,8 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "core.middleware.ApiKeyMiddleware.ApiKeyMiddleware",
-    "core.middleware.JsonExceptionMiddleware.JsonExceptionMiddleware",
+    "core.middleware.api_key_middleware.ApiKeyMiddleware",
+    "core.middleware.json_exception_middleware.JsonExceptionMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"

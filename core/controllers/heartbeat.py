@@ -9,7 +9,6 @@ from core.helpers.response import response
 
 @api_view(["POST"])
 def create_heartbeat(request):
-    # Validation
     schema = {
         "account_id": {
             "type": "integer",
@@ -59,7 +58,6 @@ def create_heartbeat(request):
             message=f"Strategy with id {strategy_id} does not exist", status_code=404
         )
 
-    # Logic
     Heartbeat.objects.create(account=account, strategy=strategy, event=event)
 
     return response(

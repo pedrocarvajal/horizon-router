@@ -1,6 +1,6 @@
 from django.db import models
-from .Account import Account
-from .Strategy import Strategy
+from .account import Account
+from .strategy import Strategy
 
 
 class Snapshot(models.Model):
