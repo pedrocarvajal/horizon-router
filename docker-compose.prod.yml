@@ -1,0 +1,122 @@
+services:
+  horizon-router-app:
+    build: .
+    container_name: horizon-router-app
+    depends_on:
+      - horizon-router-redis
+    env_file:
+      - .env
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings
+      - API_KEY_SECRET=${API_KEY_SECRET:-horizon-router-api-key}
+      - API_KEY_HEADER_NAME=${API_KEY_HEADER_NAME:-X-API-Key}
+    ports:
+      - "0.0.0.0:8000:8000"
+    restart: unless-stopped
+    volumes:
+      - ./logs:/app/logs
+      - horizon_router_storage:/app/core/storage
+    networks:
+      - horizon-router-local
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3 --timeout 120 --max-requests 1000 --max-requests-jitter 100
+
+  horizon-router-mysql:
+    image: mysql:8.0
+    container_name: horizon-router-mysql
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-horizon-router}
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-horizon_router}
+      - MYSQL_USER=${MYSQL_USER:-horizon-router}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-horizon-router}
+    ports:
+      - "0.0.0.0:3306:3306"
+    volumes:
+      - horizon_router_mysql_data:/var/lib/mysql
+    networks:
+      - horizon-router-local
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    command: --bind-address=0.0.0.0 --default-authentication-plugin=mysql_native_password
+
+  horizon-router-redis:
+    image: redis:7-alpine
+    container_name: horizon-router-redis
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:6379:6379"
+    networks:
+      - horizon-router-local
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  horizon-router-celery-worker:
+    build: .
+    container_name: horizon-router-celery-worker
+    depends_on:
+      - horizon-router-app
+      - horizon-router-mysql
+      - horizon-router-redis
+    env_file:
+      - .env
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings
+      - CELERY_BROKER_URL=redis://horizon-router-redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://horizon-router-redis:6379/0
+    command: celery -A config.celery.app worker --loglevel=INFO --concurrency=3 --max-tasks-per-child=1000
+    restart: unless-stopped
+    volumes:
+      - ./logs:/app/logs
+      - horizon_router_storage:/app/core/storage
+    networks:
+      - horizon-router-local
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  horizon-router-celery-beat:
+    build: .
+    container_name: horizon-router-celery-beat
+    depends_on:
+      - horizon-router-mysql
+      - horizon-router-redis
+    env_file:
+      - .env
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings
+      - CELERY_BROKER_URL=redis://horizon-router-redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://horizon-router-redis:6379/0
+    command: celery -A config.celery.app beat --loglevel=INFO
+    restart: unless-stopped
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - horizon-router-local
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  horizon-router-local:
+    driver: bridge
+
+volumes:
+  horizon_router_mysql_data:
+  horizon_router_storage:

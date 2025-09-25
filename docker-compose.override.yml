@@ -1,0 +1,29 @@
+services:
+  horizon-router-mysql:
+    ports:
+      - "0.0.0.0:3306:3306"
+    command: --bind-address=0.0.0.0 --default-authentication-plugin=mysql_native_password
+
+  horizon-router-app:
+    volumes:
+      - .:/app
+      - ./logs:/app/logs
+      - ./core/storage:/app/core/storage
+    command: python manage.py runserver 0.0.0.0:8000
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+    stdin_open: true
+    tty: true
+
+  horizon-router-celery-worker:
+    volumes:
+      - .:/app
+      - ./logs:/app/logs
+      - ./core/storage:/app/core/storage
+
+  horizon-router-celery-beat:
+    volumes:
+      - .:/app
+      - ./logs:/app/logs

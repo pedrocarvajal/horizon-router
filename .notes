@@ -1,0 +1,12 @@
+- /router
+    - GET /orders
+    - /order
+        - GET /{id}
+        - POST /
+        - POST /{id}/update
+
+Models:
+Order:
+- id (string, 32)
+- strategy_prefix
+- 
