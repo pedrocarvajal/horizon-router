@@ -5,9 +5,6 @@ run-dev:
 	docker compose down
 	docker compose up --build
 
-# run-bot:
-# 	docker compose --profile bot up map-telegram-bot --build
-	
 run-seed:
 	docker compose exec horizon-router-app python manage.py seed
 
