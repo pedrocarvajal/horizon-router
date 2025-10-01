@@ -11,7 +11,7 @@ services:
       - API_KEY_SECRET=${API_KEY_SECRET:-horizon-router-api-key}
       - API_KEY_HEADER_NAME=${API_KEY_HEADER_NAME:-X-API-Key}
     ports:
-      - "0.0.0.0:8000:8000"
+      - "${EXT_PORT_APP:-8000}:${INT_PORT_APP:-8000}"
     restart: unless-stopped
     volumes:
       - ./logs:/app/logs
@@ -23,7 +23,7 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3 --timeout 120 --max-requests 1000 --max-requests-jitter 100
+    command: gunicorn config.wsgi:application --bind 0.0.0.0:${INT_PORT_APP:-8000} --workers 3 --timeout 120 --max-requests 1000 --max-requests-jitter 100
 
   horizon-router-mysql:
     image: mysql:8.0
@@ -37,7 +37,7 @@ services:
       - MYSQL_USER=${MYSQL_USER:-horizon-router}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD:-horizon-router}
     ports:
-      - "0.0.0.0:3306:3306"
+      - "${EXT_PORT_MYSQL:-3306}:${INT_PORT_MYSQL:-3306}"
     volumes:
       - horizon_router_mysql_data:/var/lib/mysql
     networks:
@@ -54,7 +54,7 @@ services:
     container_name: horizon-router-redis
     restart: unless-stopped
     ports:
-      - "127.0.0.1:6379:6379"
+      - "${EXT_PORT_REDIS:-6379}:${INT_PORT_REDIS:-6379}"
     networks:
       - horizon-router-local
     logging:

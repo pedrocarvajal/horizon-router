@@ -1,7 +1,7 @@
 from core.models.account import Account
 
 
-class AccountSeeder:
+class DbDestroyAccount:
     @staticmethod
     def run():
-        Account.objects.get_or_create(name="Pedro")
+        Account.objects.all().delete()

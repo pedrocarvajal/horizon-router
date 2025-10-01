@@ -9,7 +9,7 @@ services:
       - API_KEY_SECRET=${API_KEY_SECRET:-horizon-router-api-key}
       - API_KEY_HEADER_NAME=${API_KEY_HEADER_NAME:-X-API-Key}
     ports:
-      - "0.0.0.0:8000:8000"
+      - "${EXT_PORT_APP:-8000}:${INT_PORT_APP:-8000}"
     restart: unless-stopped
     volumes:
       - horizon_router_logs:/app/logs
@@ -31,7 +31,7 @@ services:
       - MYSQL_USER=${MYSQL_USER:-horizon-router}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD:-horizon-router}
     ports:
-      - "0.0.0.0:3306:3306"
+      - "${EXT_PORT_MYSQL:-3306}:${INT_PORT_MYSQL:-3306}"
     volumes:
       - horizon_router_mysql_data:/var/lib/mysql
     networks:
@@ -43,7 +43,7 @@ services:
     container_name: horizon-router-redis
     restart: unless-stopped
     ports:
-      - "127.0.0.1:6379:6379"
+      - "${EXT_PORT_REDIS:-6379}:${INT_PORT_REDIS:-6379}"
     networks:
       - horizon-router-local
 

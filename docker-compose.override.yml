@@ -1,7 +1,7 @@
 services:
   horizon-router-mysql:
     ports:
-      - "0.0.0.0:3306:3306"
+      - "${EXT_PORT_MYSQL:-3306}:${INT_PORT_MYSQL:-3306}"
     command: --bind-address=0.0.0.0 --default-authentication-plugin=mysql_native_password
 
   horizon-router-app:
@@ -9,7 +9,7 @@ services:
       - .:/app
       - ./logs:/app/logs
       - ./core/storage:/app/core/storage
-    command: python manage.py runserver 0.0.0.0:8000
+    command: python manage.py runserver 0.0.0.0:${INT_PORT_APP:-8000}
     environment:
       - DJANGO_SETTINGS_MODULE=config.settings
       - PYTHONDONTWRITEBYTECODE=1

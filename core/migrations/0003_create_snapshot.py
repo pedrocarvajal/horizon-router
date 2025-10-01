@@ -1,17 +1,17 @@
-# Generated manually on 2025-09-25 17:30
+# Generated manually on 2025-10-01
 
-from django.db import migrations, models
 import django.db.models.deletion
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("models", "0007_add_symbol_to_strategy"),
+        ("core", "0002_create_strategy"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name="Heartbeat",
+            name="Snapshot",
             fields=[
                 (
                     "id",
@@ -23,25 +23,28 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ("event", models.CharField(max_length=255)),
+                ("nav", models.DecimalField(decimal_places=8, max_digits=20)),
+                ("exposure", models.DecimalField(decimal_places=8, max_digits=20)),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
                 ("updated_at", models.DateTimeField(auto_now=True)),
                 (
                     "account",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        to="models.account",
+                        on_delete=django.db.models.deletion.CASCADE, to="core.account"
                     ),
                 ),
                 (
                     "strategy",
                     models.ForeignKey(
+                        blank=True,
+                        null=True,
                         on_delete=django.db.models.deletion.CASCADE,
-                        to="models.strategy",
+                        to="core.strategy",
                     ),
                 ),
             ],
             options={
-                "db_table": "heartbeats",
+                "db_table": "snapshots",
             },
         ),
     ]

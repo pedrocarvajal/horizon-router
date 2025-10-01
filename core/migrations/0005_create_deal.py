@@ -1,17 +1,17 @@
-# Generated manually on 2025-09-25 17:30
+# Generated manually on 2025-10-01
 
-from django.db import migrations, models
 import django.db.models.deletion
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("models", "0005_change_strategy_prefix_to_fk"),
+        ("core", "0004_create_heartbeat"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name="Snapshot",
+            name="Deal",
             fields=[
                 (
                     "id",
@@ -22,36 +22,36 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("event", models.CharField(max_length=255)),
+                ("token", models.CharField(max_length=255)),
+                ("time", models.DateTimeField()),
+                ("symbol", models.CharField(max_length=100)),
+                ("type", models.CharField(max_length=50)),
+                ("direction", models.IntegerField()),
+                ("volume", models.DecimalField(decimal_places=8, max_digits=20)),
+                ("price", models.DecimalField(decimal_places=8, max_digits=20)),
                 (
-                    "nav",
-                    models.DecimalField(decimal_places=8, max_digits=20),
-                ),
-                (
-                    "exposure",
-                    models.DecimalField(decimal_places=8, max_digits=20),
+                    "profit",
+                    models.DecimalField(
+                        blank=True, decimal_places=8, max_digits=20, null=True
+                    ),
                 ),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
                 ("updated_at", models.DateTimeField(auto_now=True)),
                 (
                     "account",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        to="models.account",
+                        on_delete=django.db.models.deletion.CASCADE, to="core.account"
                     ),
                 ),
                 (
                     "strategy",
                     models.ForeignKey(
-                        blank=True,
-                        null=True,
-                        on_delete=django.db.models.deletion.CASCADE,
-                        to="models.strategy",
+                        on_delete=django.db.models.deletion.CASCADE, to="core.strategy"
                     ),
                 ),
             ],
             options={
-                "db_table": "snapshots",
+                "db_table": "deals",
             },
         ),
     ]

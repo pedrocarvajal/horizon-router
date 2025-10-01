@@ -1,16 +1,17 @@
-# Generated manually on 2025-09-25 17:30
+# Generated manually on 2025-10-01
 
+import django.db.models.deletion
 from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("models", "0002_add_deal_model"),
+        ("core", "0003_create_snapshot"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name="Account",
+            name="Heartbeat",
             fields=[
                 (
                     "id",
@@ -21,12 +22,24 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("name", models.CharField(max_length=255)),
+                ("event", models.CharField(max_length=255)),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
                 ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "account",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="core.account"
+                    ),
+                ),
+                (
+                    "strategy",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="core.strategy"
+                    ),
+                ),
             ],
             options={
-                "db_table": "accounts",
+                "db_table": "heartbeats",
             },
         ),
     ]

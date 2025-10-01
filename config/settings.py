@@ -64,7 +64,7 @@ DATABASES = {
         "USER": os.getenv("MYSQL_USER", "horizon-router"),
         "PASSWORD": os.getenv("MYSQL_PASSWORD", "horizon-router"),
         "HOST": os.getenv("MYSQL_HOST", "horizon-router-mysql"),
-        "PORT": os.getenv("MYSQL_PORT", "3306"),
+        "PORT": os.getenv("INT_PORT_MYSQL", "3306"),
         "OPTIONS": {
             "charset": "utf8mb4",
         },
@@ -95,10 +95,12 @@ CORS_ALLOW_HEADERS = list(default_headers) + ["x-api-key"]
 CORS_ALLOW_CREDENTIALS = True
 
 CELERY_BROKER_URL = os.getenv(
-    "CELERY_BROKER_URL", "redis://horizon-router-redis:6379/0"
+    "CELERY_BROKER_URL",
+    f"redis://horizon-router-redis:{os.getenv('INT_PORT_REDIS', '6379')}/0",
 )
 CELERY_RESULT_BACKEND = os.getenv(
-    "CELERY_RESULT_BACKEND", "redis://horizon-router-redis:6379/0"
+    "CELERY_RESULT_BACKEND",
+    f"redis://horizon-router-redis:{os.getenv('INT_PORT_REDIS', '6379')}/0",
 )
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
@@ -111,6 +113,14 @@ API_KEY_EXEMPT_PATH_PREFIXES = []
 API_KEY_EXEMPT_EXACT_PATHS = ["/"]
 
 ENV_MODE = os.getenv("ENV_MODE", "development")
+
+INT_PORT_APP = os.getenv("INT_PORT_APP", "8000")
+INT_PORT_MYSQL = os.getenv("INT_PORT_MYSQL", "3306")
+INT_PORT_REDIS = os.getenv("INT_PORT_REDIS", "6379")
+
+EXT_PORT_APP = os.getenv("EXT_PORT_APP", "8000")
+EXT_PORT_MYSQL = os.getenv("EXT_PORT_MYSQL", "3306")
+EXT_PORT_REDIS = os.getenv("EXT_PORT_REDIS", "6379")
 
 LOGGING = {
     "version": 1,
