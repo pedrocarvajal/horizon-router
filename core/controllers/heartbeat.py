@@ -12,15 +12,17 @@ from core.helpers.response import response
 @api_view(["POST"])
 def create_heartbeat(request):
     schema = {
-        "account_id": {
-            "type": "integer",
+        "broker_account_number": {
+            "type": "string",
             "required": True,
-            "min": 1,
+            "maxlength": 255,
+            "empty": False,
         },
-        "strategy_id": {
-            "type": "integer",
+        "strategy_prefix": {
+            "type": "string",
             "required": True,
-            "min": 1,
+            "maxlength": 50,
+            "empty": False,
         },
         "event": {
             "type": "string",
@@ -42,22 +44,24 @@ def create_heartbeat(request):
             message="Validation failed", data=validator.errors, status_code=400
         )
 
-    account_id = data["account_id"]
-    strategy_id = data["strategy_id"]
+    broker_account_number = data["broker_account_number"]
+    strategy_prefix = data["strategy_prefix"]
     event = data["event"]
 
     try:
-        account = Account.objects.get(id=account_id)
+        account = Account.objects.get(broker_account_number=broker_account_number)
     except Account.DoesNotExist:
         return response(
-            message=f"Account with id {account_id} does not exist", status_code=404
+            message=f"Account with broker_account_number {broker_account_number} does not exist",
+            status_code=404,
         )
 
     try:
-        strategy = Strategy.objects.get(id=strategy_id)
+        strategy = Strategy.objects.get(prefix=strategy_prefix)
     except Strategy.DoesNotExist:
         return response(
-            message=f"Strategy with id {strategy_id} does not exist", status_code=404
+            message=f"Strategy with prefix {strategy_prefix} does not exist",
+            status_code=404,
         )
 
     Heartbeat.objects.create(account=account, strategy=strategy, event=event)

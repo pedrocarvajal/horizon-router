@@ -19,8 +19,8 @@ class HeartbeatControllerE2ETest(SimpleTestCase):
         )
 
         heartbeat_payload = {
-            "account_id": account_id,
-            "strategy_id": strategy_id,
+            "broker_account_number": "HB123456789",
+            "strategy_prefix": "HB",
             "event": "Test heartbeat event",
         }
 
