@@ -20,13 +20,18 @@ run-db-refresh:
 	make run-db-seed
 	
 test-e2e:
-	docker compose exec horizon-router-app python manage.py test core.tests.e2e
+	docker compose exec horizon-router-app python manage.py test core.tests.e2e --verbosity=2 --failfast
 
 test-integration:
-	docker compose exec horizon-router-app python manage.py test core.tests.integration
+	docker compose exec horizon-router-app python manage.py test core.tests.integration --verbosity=2 --failfast
 
 test-unit:
-	docker compose exec horizon-router-app python manage.py test core.tests.unit
+	docker compose exec horizon-router-app python manage.py test core.tests.unit --verbosity=2 --failfast
+
+test:
+	make test-e2e
+	make test-integration
+	make test-unit
 
 # execute-celery-task-update_crypto_calendar_events:
 # 	docker compose exec map-celery-beat celery -A config call update_crypto_calendar_events
