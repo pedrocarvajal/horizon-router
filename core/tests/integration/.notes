@@ -1,0 +1,18 @@
+INTEGRATION TESTS
+
+Tests that validate the interaction between multiple components, modules, or external systems working together.
+
+Characteristics:
+
+- Test integration points between different parts of the system
+- May involve database connections, external APIs, or services
+- Verify that components communicate correctly
+- More complex than unit tests, faster than e2e tests
+- Test data flow across component boundaries
+
+Examples:
+
+- Model interacting with database: create account, save, retrieve, validate persistence
+- Service calling external API: send request, handle response, process data
+- Controller using service and model: receive request -> call service -> query database -> return response
+- Message queue interaction: publish event -> consume -> process -> store result

@@ -1,0 +1,16 @@
+UNIT TESTS
+
+Tests that validate individual functions, methods, or classes in isolation without external dependencies.
+
+Characteristics:
+- Fast execution
+- No database, network, or file system access
+- Use mocks/stubs for dependencies
+- Should be the majority of your test suite (70%)
+- Test single responsibility
+
+Examples:
+- Test a function that calculates profit/loss returns correct value
+- Test model validation logic with invalid input
+- Test utility functions for data transformation
+- Test business logic methods in isolation
