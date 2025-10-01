@@ -23,6 +23,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ("event", models.CharField(max_length=255)),
+                ("balance", models.DecimalField(decimal_places=8, max_digits=20)),
                 ("nav", models.DecimalField(decimal_places=8, max_digits=20)),
                 ("exposure", models.DecimalField(decimal_places=8, max_digits=20)),
                 ("created_at", models.DateTimeField(auto_now_add=True)),

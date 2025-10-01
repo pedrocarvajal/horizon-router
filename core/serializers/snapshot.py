@@ -5,6 +5,7 @@ from core.models.snapshot import Snapshot
 class SnapshotSerializer(serializers.ModelSerializer):
     account = serializers.SerializerMethodField()
     strategy = serializers.SerializerMethodField()
+    balance = serializers.CharField()
     nav = serializers.CharField()
     exposure = serializers.CharField()
 
@@ -15,6 +16,7 @@ class SnapshotSerializer(serializers.ModelSerializer):
             "account",
             "strategy",
             "event",
+            "balance",
             "nav",
             "exposure",
             "created_at",

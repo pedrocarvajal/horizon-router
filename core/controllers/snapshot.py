@@ -31,6 +31,11 @@ def create_snapshot(request):
             "maxlength": 255,
             "empty": False,
         },
+        "balance": {
+            "type": "string",
+            "required": True,
+            "empty": False,
+        },
         "nav": {
             "type": "string",
             "required": True,
@@ -76,17 +81,20 @@ def create_snapshot(request):
             )
 
     try:
+        balance = Decimal(data["balance"])
         nav = Decimal(data["nav"])
         exposure = Decimal(data["exposure"])
     except InvalidOperation:
         return response(
-            message="Invalid decimal format for nav or exposure", status_code=400
+            message="Invalid decimal format for balance, nav or exposure",
+            status_code=400,
         )
 
     snapshot = Snapshot.objects.create(
         account=account,
         strategy=strategy,
         event=data["event"],
+        balance=balance,
         nav=nav,
         exposure=exposure,
     )
@@ -149,6 +157,11 @@ def update_snapshot(request, snapshot_id):
             "maxlength": 255,
             "empty": False,
         },
+        "balance": {
+            "type": "string",
+            "required": False,
+            "empty": False,
+        },
         "nav": {
             "type": "string",
             "required": False,
@@ -207,6 +220,14 @@ def update_snapshot(request, snapshot_id):
 
     if "event" in data:
         snapshot.event = data["event"]
+
+    if "balance" in data:
+        try:
+            snapshot.balance = Decimal(data["balance"])
+        except InvalidOperation:
+            return response(
+                message="Invalid decimal format for balance", status_code=400
+            )
 
     if "nav" in data:
         try:
