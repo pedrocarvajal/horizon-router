@@ -75,9 +75,11 @@ def create_deal(request):
             "required": False,
             "nullable": True,
         },
-        "account_id": {
-            "type": "integer",
+        "broker_account_number": {
+            "type": "string",
             "required": True,
+            "maxlength": 255,
+            "empty": False,
         },
     }
 
@@ -102,10 +104,12 @@ def create_deal(request):
         )
 
     try:
-        account = Account.objects.get(id=data["account_id"])
+        account = Account.objects.get(
+            broker_account_number=data["broker_account_number"]
+        )
     except Account.DoesNotExist:
         return response(
-            message=f"Account with id {data['account_id']} does not exist",
+            message=f"Account with broker_account_number {data['broker_account_number']} does not exist",
             status_code=404,
         )
 
@@ -215,9 +219,11 @@ def update_deal(request, deal_id):
             "required": False,
             "nullable": True,
         },
-        "account_id": {
-            "type": "integer",
+        "broker_account_number": {
+            "type": "string",
             "required": False,
+            "maxlength": 255,
+            "empty": False,
         },
     }
 
@@ -250,13 +256,15 @@ def update_deal(request, deal_id):
                 status_code=404,
             )
 
-    if "account_id" in data:
+    if "broker_account_number" in data:
         try:
-            account = Account.objects.get(id=data["account_id"])
+            account = Account.objects.get(
+                broker_account_number=data["broker_account_number"]
+            )
             deal.account = account
         except Account.DoesNotExist:
             return response(
-                message=f"Account with id {data['account_id']} does not exist",
+                message=f"Account with broker_account_number {data['broker_account_number']} does not exist",
                 status_code=404,
             )
 

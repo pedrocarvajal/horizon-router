@@ -30,7 +30,7 @@ Creates a new trading deal record.
   "profit": 10.5, // Optional, number
   "take_profit_price": 1.09, // Optional, number
   "stop_loss_price": 1.08, // Optional, number
-  "account_id": 456 // Required, integer
+  "broker_account_number": "123456" // Required, string, max 255 chars
 }
 ```
 
@@ -144,7 +144,7 @@ Updates an existing deal. All fields are optional.
   "profit": 10.5, // Optional, number
   "take_profit_price": 1.09, // Optional, number
   "stop_loss_price": 1.08, // Optional, number
-  "account_id": 456 // Optional, integer
+  "broker_account_number": "123456" // Optional, string, max 255 chars
 }
 ```
 

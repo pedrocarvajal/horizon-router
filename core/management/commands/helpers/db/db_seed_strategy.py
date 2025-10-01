@@ -39,6 +39,7 @@ class DbSeedStrategy:
                 "symbol": "xauusd",
             },
             {"name": "XAUUSD.SRSniper", "prefix": "XAUUSD.SRS", "symbol": "xauusd"},
+            {"name": "XAUUSD.Test", "prefix": "XAUUSD.TST", "symbol": "xauusd"},
             {
                 "name": "XTIUSD.EHighBreakout",
                 "prefix": "XTIUSD.EHB",

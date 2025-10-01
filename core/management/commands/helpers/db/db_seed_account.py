@@ -9,3 +9,9 @@ class DbSeedAccount:
             broker_account_number="3000085718",
             broker_name="Darwinex",
         )
+
+        Account.objects.get_or_create(
+            name="Pedro",
+            broker_account_number="52506938",
+            broker_name="IC-Markets",
+        )

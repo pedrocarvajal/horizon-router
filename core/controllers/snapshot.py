@@ -12,13 +12,17 @@ from core.serializers.snapshot import SnapshotSerializer
 @api_view(["POST"])
 def create_snapshot(request):
     schema = {
-        "account_id": {
-            "type": "integer",
+        "broker_account_number": {
+            "type": "string",
             "required": True,
+            "maxlength": 255,
+            "empty": False,
         },
-        "strategy_id": {
-            "type": "integer",
+        "strategy_prefix": {
+            "type": "string",
             "required": False,
+            "maxlength": 50,
+            "empty": False,
             "nullable": True,
         },
         "event": {
@@ -52,20 +56,22 @@ def create_snapshot(request):
         )
 
     try:
-        account = Account.objects.get(id=data["account_id"])
+        account = Account.objects.get(
+            broker_account_number=data["broker_account_number"]
+        )
     except Account.DoesNotExist:
         return response(
-            message=f"Account with id {data['account_id']} does not exist",
+            message=f"Account with broker_account_number {data['broker_account_number']} does not exist",
             status_code=404,
         )
 
     strategy = None
-    if data.get("strategy_id"):
+    if data.get("strategy_prefix"):
         try:
-            strategy = Strategy.objects.get(id=data["strategy_id"])
+            strategy = Strategy.objects.get(prefix=data["strategy_prefix"])
         except Strategy.DoesNotExist:
             return response(
-                message=f"Strategy with id {data['strategy_id']} does not exist",
+                message=f"Strategy with prefix {data['strategy_prefix']} does not exist",
                 status_code=404,
             )
 
@@ -94,17 +100,19 @@ def create_snapshot(request):
 
 @api_view(["GET"])
 def search_snapshots(request):
-    account_id = request.GET.get("account_id")
-    strategy_id = request.GET.get("strategy_id")
+    broker_account_number = request.GET.get("broker_account_number")
+    strategy_prefix = request.GET.get("strategy_prefix")
     event = request.GET.get("event")
 
     snapshots = Snapshot.objects.all()
 
-    if account_id:
-        snapshots = snapshots.filter(account_id=account_id)
+    if broker_account_number:
+        snapshots = snapshots.filter(
+            account__broker_account_number=broker_account_number
+        )
 
-    if strategy_id:
-        snapshots = snapshots.filter(strategy_id=strategy_id)
+    if strategy_prefix:
+        snapshots = snapshots.filter(strategy__prefix=strategy_prefix)
 
     if event:
         snapshots = snapshots.filter(event__icontains=event)
@@ -122,13 +130,17 @@ def search_snapshots(request):
 @api_view(["PUT"])
 def update_snapshot(request, snapshot_id):
     schema = {
-        "account_id": {
-            "type": "integer",
+        "broker_account_number": {
+            "type": "string",
             "required": False,
+            "maxlength": 255,
+            "empty": False,
         },
-        "strategy_id": {
-            "type": "integer",
+        "strategy_prefix": {
+            "type": "string",
             "required": False,
+            "maxlength": 50,
+            "empty": False,
             "nullable": True,
         },
         "event": {
@@ -168,26 +180,28 @@ def update_snapshot(request, snapshot_id):
             message=f"Snapshot with id {snapshot_id} does not exist", status_code=404
         )
 
-    if "account_id" in data:
+    if "broker_account_number" in data:
         try:
-            account = Account.objects.get(id=data["account_id"])
+            account = Account.objects.get(
+                broker_account_number=data["broker_account_number"]
+            )
             snapshot.account = account
         except Account.DoesNotExist:
             return response(
-                message=f"Account with id {data['account_id']} does not exist",
+                message=f"Account with broker_account_number {data['broker_account_number']} does not exist",
                 status_code=404,
             )
 
-    if "strategy_id" in data:
-        if data["strategy_id"] is None:
+    if "strategy_prefix" in data:
+        if data["strategy_prefix"] is None:
             snapshot.strategy = None
         else:
             try:
-                strategy = Strategy.objects.get(id=data["strategy_id"])
+                strategy = Strategy.objects.get(prefix=data["strategy_prefix"])
                 snapshot.strategy = strategy
             except Strategy.DoesNotExist:
                 return response(
-                    message=f"Strategy with id {data['strategy_id']} does not exist",
+                    message=f"Strategy with prefix {data['strategy_prefix']} does not exist",
                     status_code=404,
                 )
 
