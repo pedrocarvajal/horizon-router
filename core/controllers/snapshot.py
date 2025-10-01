@@ -6,6 +6,7 @@ from core.models.account import Account
 from core.models.strategy import Strategy
 from core.helpers.response import response
 from decimal import Decimal, InvalidOperation
+from core.serializers.snapshot import SnapshotSerializer
 
 
 @api_view(["POST"])
@@ -108,28 +109,8 @@ def search_snapshots(request):
     if event:
         snapshots = snapshots.filter(event__icontains=event)
 
-    snapshots_data = [
-        {
-            "id": snapshot.id,
-            "account": {
-                "id": snapshot.account.id,
-                "name": snapshot.account.name,
-            },
-            "strategy": {
-                "id": snapshot.strategy.id,
-                "name": snapshot.strategy.name,
-                "prefix": snapshot.strategy.prefix,
-            }
-            if snapshot.strategy
-            else None,
-            "event": snapshot.event,
-            "nav": str(snapshot.nav),
-            "exposure": str(snapshot.exposure),
-            "created_at": snapshot.created_at.isoformat(),
-            "updated_at": snapshot.updated_at.isoformat(),
-        }
-        for snapshot in snapshots
-    ]
+    serializer = SnapshotSerializer(snapshots, many=True)
+    snapshots_data = serializer.data
 
     return response(
         message="Snapshots retrieved successfully",

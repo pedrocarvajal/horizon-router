@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view
 from cerberus import Validator
 from core.models.strategy import Strategy
 from core.helpers.response import response
+from core.serializers.strategy import StrategySerializer
 
 
 @api_view(["POST"])
@@ -70,17 +71,8 @@ def search_strategies(request):
     if symbol:
         strategies = strategies.filter(symbol__icontains=symbol)
 
-    strategies_data = [
-        {
-            "id": strategy.id,
-            "name": strategy.name,
-            "prefix": strategy.prefix,
-            "symbol": strategy.symbol,
-            "created_at": strategy.created_at.isoformat(),
-            "updated_at": strategy.updated_at.isoformat(),
-        }
-        for strategy in strategies
-    ]
+    serializer = StrategySerializer(strategies, many=True)
+    strategies_data = serializer.data
 
     return response(
         message="Strategies retrieved successfully",

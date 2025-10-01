@@ -35,6 +35,18 @@ class Migration(migrations.Migration):
                         blank=True, decimal_places=8, max_digits=20, null=True
                     ),
                 ),
+                (
+                    "take_profit_price",
+                    models.DecimalField(
+                        blank=True, decimal_places=8, max_digits=20, null=True
+                    ),
+                ),
+                (
+                    "stop_loss_price",
+                    models.DecimalField(
+                        blank=True, decimal_places=8, max_digits=20, null=True
+                    ),
+                ),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
                 ("updated_at", models.DateTimeField(auto_now=True)),
                 (

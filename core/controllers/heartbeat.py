@@ -1,4 +1,6 @@
 import json
+from datetime import timedelta
+from django.utils import timezone
 from rest_framework.decorators import api_view
 from cerberus import Validator
 from core.models.heartbeat import Heartbeat
@@ -59,6 +61,9 @@ def create_heartbeat(request):
         )
 
     Heartbeat.objects.create(account=account, strategy=strategy, event=event)
+
+    cutoff_date = timezone.now() - timedelta(days=7)
+    Heartbeat.objects.filter(created_at__lt=cutoff_date).delete()
 
     return response(
         message="Heartbeat created successfully",

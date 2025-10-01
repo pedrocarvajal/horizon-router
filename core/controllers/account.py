@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view
 from cerberus import Validator
 from core.models.account import Account
 from core.helpers.response import response
+from core.serializers.account import AccountSerializer
 
 
 @api_view(["POST"])
@@ -72,17 +73,8 @@ def search_accounts(request):
             broker_account_number__icontains=broker_account_number
         )
 
-    accounts_data = [
-        {
-            "id": account.id,
-            "name": account.name,
-            "broker_account_number": account.broker_account_number,
-            "broker_name": account.broker_name,
-            "created_at": account.created_at.isoformat(),
-            "updated_at": account.updated_at.isoformat(),
-        }
-        for account in accounts
-    ]
+    serializer = AccountSerializer(accounts, many=True)
+    accounts_data = serializer.data
 
     return response(
         message="Accounts retrieved successfully",

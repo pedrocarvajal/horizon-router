@@ -6,6 +6,8 @@ from core.models.deal import Deal
 from core.models.strategy import Strategy
 from core.models.account import Account
 from core.helpers.response import response
+from core.enums.deal import DealTypes, DealDirections
+from core.serializers.deal import DealSerializer
 
 
 @api_view(["POST"])
@@ -17,9 +19,17 @@ def create_deal(request):
             "maxlength": 255,
             "empty": False,
         },
-        "strategy_id": {
-            "type": "integer",
+        "strategy_prefix": {
+            "type": "string",
             "required": True,
+            "maxlength": 50,
+            "empty": False,
+        },
+        "strategy_name": {
+            "type": "string",
+            "required": True,
+            "maxlength": 255,
+            "empty": False,
         },
         "time": {
             "type": "string",
@@ -33,14 +43,14 @@ def create_deal(request):
             "empty": False,
         },
         "type": {
-            "type": "string",
+            "type": "integer",
             "required": True,
-            "maxlength": 50,
-            "empty": False,
+            "allowed": [DealTypes.ORDER_TYPE_BUY, DealTypes.ORDER_TYPE_SELL],
         },
         "direction": {
             "type": "integer",
             "required": True,
+            "allowed": [DealDirections.IN, DealDirections.OUT],
         },
         "volume": {
             "type": "number",
@@ -51,6 +61,16 @@ def create_deal(request):
             "required": True,
         },
         "profit": {
+            "type": "number",
+            "required": False,
+            "nullable": True,
+        },
+        "take_profit_price": {
+            "type": "number",
+            "required": False,
+            "nullable": True,
+        },
+        "stop_loss_price": {
             "type": "number",
             "required": False,
             "nullable": True,
@@ -74,10 +94,10 @@ def create_deal(request):
         )
 
     try:
-        strategy = Strategy.objects.get(id=data["strategy_id"])
+        strategy = Strategy.objects.get(prefix=data["strategy_prefix"])
     except Strategy.DoesNotExist:
         return response(
-            message=f"Strategy with id {data['strategy_id']} does not exist",
+            message=f"Strategy with prefix '{data['strategy_prefix']}' and name '{data['strategy_name']}' does not exist",
             status_code=404,
         )
 
@@ -106,6 +126,8 @@ def create_deal(request):
         volume=data["volume"],
         price=data["price"],
         profit=data.get("profit"),
+        take_profit_price=data.get("take_profit_price"),
+        stop_loss_price=data.get("stop_loss_price"),
         account=account,
     )
 
@@ -118,58 +140,16 @@ def create_deal(request):
 
 @api_view(["GET"])
 def search_deals(request):
-    token = request.GET.get("token")
-    strategy_id = request.GET.get("strategy_id")
-    symbol = request.GET.get("symbol")
-    type_param = request.GET.get("type")
-    direction = request.GET.get("direction")
-    account_id = request.GET.get("account_id")
+    deal_id = request.GET.get("id")
+    deals = Deal.objects.select_related("strategy", "account")
 
-    deals = Deal.objects.select_related("strategy", "account").all()
+    if deal_id:
+        deals = deals.filter(id=deal_id)
+    else:
+        deals = deals.all()
 
-    if token:
-        deals = deals.filter(token__icontains=token)
-
-    if strategy_id:
-        deals = deals.filter(strategy_id=strategy_id)
-
-    if symbol:
-        deals = deals.filter(symbol__icontains=symbol)
-
-    if type_param:
-        deals = deals.filter(type__icontains=type_param)
-
-    if direction:
-        deals = deals.filter(direction=direction)
-
-    if account_id:
-        deals = deals.filter(account_id=account_id)
-
-    deals_data = [
-        {
-            "id": deal.id,
-            "token": deal.token,
-            "strategy": {
-                "id": deal.strategy.id,
-                "name": deal.strategy.name,
-                "prefix": deal.strategy.prefix,
-            },
-            "time": deal.time.isoformat(),
-            "symbol": deal.symbol,
-            "type": deal.type,
-            "direction": deal.direction,
-            "volume": str(deal.volume),
-            "price": str(deal.price),
-            "profit": str(deal.profit) if deal.profit is not None else None,
-            "account": {
-                "id": deal.account.id,
-                "name": deal.account.name,
-            },
-            "created_at": deal.created_at.isoformat(),
-            "updated_at": deal.updated_at.isoformat(),
-        }
-        for deal in deals
-    ]
+    serializer = DealSerializer(deals, many=True)
+    deals_data = serializer.data
 
     return response(
         message="Deals retrieved successfully",
@@ -203,14 +183,14 @@ def update_deal(request, deal_id):
             "empty": False,
         },
         "type": {
-            "type": "string",
+            "type": "integer",
             "required": False,
-            "maxlength": 50,
-            "empty": False,
+            "allowed": [DealTypes.ORDER_TYPE_BUY, DealTypes.ORDER_TYPE_SELL],
         },
         "direction": {
             "type": "integer",
             "required": False,
+            "allowed": [DealDirections.IN, DealDirections.OUT],
         },
         "volume": {
             "type": "number",
@@ -221,6 +201,16 @@ def update_deal(request, deal_id):
             "required": False,
         },
         "profit": {
+            "type": "number",
+            "required": False,
+            "nullable": True,
+        },
+        "take_profit_price": {
+            "type": "number",
+            "required": False,
+            "nullable": True,
+        },
+        "stop_loss_price": {
             "type": "number",
             "required": False,
             "nullable": True,
@@ -292,6 +282,10 @@ def update_deal(request, deal_id):
         deal.price = data["price"]
     if "profit" in data:
         deal.profit = data["profit"]
+    if "take_profit_price" in data:
+        deal.take_profit_price = data["take_profit_price"]
+    if "stop_loss_price" in data:
+        deal.stop_loss_price = data["stop_loss_price"]
 
     deal.save()
 
