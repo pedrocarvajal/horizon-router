@@ -13,6 +13,18 @@ from core.controllers.strategy import (
     update_strategy,
     delete_strategy,
 )
+from core.controllers.deal import (
+    create_deal,
+    search_deals,
+    update_deal,
+    delete_deal,
+)
+from core.controllers.snapshot import (
+    create_snapshot,
+    search_snapshots,
+    update_snapshot,
+    delete_snapshot,
+)
 
 urlpatterns = [
     path("health/", health, name="health"),
@@ -26,5 +38,15 @@ urlpatterns = [
     path("strategies/<int:strategy_id>/", update_strategy, name="update_strategy"),
     path(
         "strategies/<int:strategy_id>/delete/", delete_strategy, name="delete_strategy"
+    ),
+    path("deals/", create_deal, name="create_deal"),
+    path("deals/search/", search_deals, name="search_deals"),
+    path("deals/<int:deal_id>/", update_deal, name="update_deal"),
+    path("deals/<int:deal_id>/delete/", delete_deal, name="delete_deal"),
+    path("snapshots/", create_snapshot, name="create_snapshot"),
+    path("snapshots/search/", search_snapshots, name="search_snapshots"),
+    path("snapshots/<int:snapshot_id>/", update_snapshot, name="update_snapshot"),
+    path(
+        "snapshots/<int:snapshot_id>/delete/", delete_snapshot, name="delete_snapshot"
     ),
 ]
