@@ -19,7 +19,18 @@ services:
       - ./logs:/app/logs
       - horizon_router_storage:/app/core/storage
     networks:
+      - easypanel
       - horizon-router-local
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.horizon-router.rule=Host(`router.horizon5.tech`)"
+      - "traefik.http.routers.horizon-router.entrypoints=https"
+      - "traefik.http.routers.horizon-router.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.horizon-router-http.rule=Host(`router.horizon5.tech`)"
+      - "traefik.http.routers.horizon-router-http.entrypoints=http"
+      - "traefik.http.routers.horizon-router-http.middlewares=redirect-to-https@file"
+      - "traefik.http.services.horizon-router.loadbalancer.server.port=8000"
+      - "traefik.docker.network=easypanel"
     logging:
       driver: "json-file"
       options:
@@ -120,6 +131,8 @@ services:
         max-file: "3"
 
 networks:
+  easypanel:
+    external: true
   horizon-router-local:
     driver: bridge
 
