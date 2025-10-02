@@ -4,7 +4,6 @@ services:
     container_name: horizon-router-app
     depends_on:
       - horizon-router-redis
-      - horizon-router-mysql
     env_file:
       - .env
     environment:
@@ -13,22 +12,14 @@ services:
       - DEBUG=False
       - API_KEY_SECRET=${API_KEY_SECRET:-horizon-router-api-key}
       - API_KEY_HEADER_NAME=${API_KEY_HEADER_NAME:-X-API-Key}
-    expose:
-      - "8000"
+    ports:
+      - "${EXT_PORT_APP:-8000}:${INT_PORT_APP:-8000}"
     restart: unless-stopped
     volumes:
       - ./logs:/app/logs
       - horizon_router_storage:/app/core/storage
     networks:
       - horizon-router-local
-      - easypanel
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.horizon-router.rule=Host(`router.horizon5.tech`)"
-      - "traefik.http.routers.horizon-router.entrypoints=websecure"
-      - "traefik.http.routers.horizon-router.tls.certresolver=letsencrypt"
-      - "traefik.http.services.horizon-router.loadbalancer.server.port=8000"
-      - "traefik.docker.network=easypanel"
     logging:
       driver: "json-file"
       options:
@@ -131,8 +122,6 @@ services:
 networks:
   horizon-router-local:
     driver: bridge
-  easypanel:
-    external: true
 
 volumes:
   horizon_router_mysql_data:
