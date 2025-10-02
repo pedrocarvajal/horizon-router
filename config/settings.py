@@ -23,7 +23,14 @@ SECRET_KEY = os.getenv("SECRET_KEY", "default")
 
 DEBUG = os.getenv("DEBUG", "True").lower() in ("true", "1", "yes")
 
-ALLOWED_HOSTS = ["*"]
+if os.getenv("ENV_MODE", "development") == "production":
+    ALLOWED_HOSTS = [
+        "router.horizon5.tech",
+        "localhost",
+        "127.0.0.1",
+    ]
+else:
+    ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     "django.contrib.contenttypes",
@@ -90,7 +97,15 @@ REST_FRAMEWORK = {
     "UNAUTHENTICATED_TOKEN": None,
 }
 
-CORS_ALLOW_ALL_ORIGINS = True
+if os.getenv("ENV_MODE", "development") == "production":
+    CORS_ALLOWED_ORIGINS = [
+        "https://router.horizon5.tech",
+        "https://horizon5.tech",
+    ]
+    CORS_ALLOW_ALL_ORIGINS = False
+else:
+    CORS_ALLOW_ALL_ORIGINS = True
+
 CORS_ALLOW_HEADERS = list(default_headers) + ["x-api-key"]
 CORS_ALLOW_CREDENTIALS = True
 
@@ -169,3 +184,14 @@ LOGGING = {
         },
     },
 }
+
+if os.getenv("ENV_MODE", "development") == "production":
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True

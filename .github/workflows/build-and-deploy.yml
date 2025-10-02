@@ -1,18 +1,15 @@
-name: Deploy to Production
+name: Build and Deploy to Production
 
 on:
-  push:
-    branches: [main]
-
   workflow_dispatch:
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     environment: Production
 
     steps:
-      - name: Deploy to server
+      - name: Build and deploy to server
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_HOST }}
@@ -22,7 +19,7 @@ jobs:
           script: |
             set -e
             cd /root/horizon-router
-            
+
             git fetch origin
             git reset --hard origin/main
             git clean -fd

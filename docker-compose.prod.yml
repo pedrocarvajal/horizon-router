@@ -8,6 +8,8 @@ services:
       - .env
     environment:
       - DJANGO_SETTINGS_MODULE=config.settings
+      - ENV_MODE=production
+      - DEBUG=False
       - API_KEY_SECRET=${API_KEY_SECRET:-horizon-router-api-key}
       - API_KEY_HEADER_NAME=${API_KEY_HEADER_NAME:-X-API-Key}
     ports:
@@ -74,6 +76,8 @@ services:
       - .env
     environment:
       - DJANGO_SETTINGS_MODULE=config.settings
+      - ENV_MODE=production
+      - DEBUG=False
       - CELERY_BROKER_URL=redis://horizon-router-redis:6379/0
       - CELERY_RESULT_BACKEND=redis://horizon-router-redis:6379/0
     command: celery -A config.celery.app worker --loglevel=INFO --concurrency=3 --max-tasks-per-child=1000
@@ -99,6 +103,8 @@ services:
       - .env
     environment:
       - DJANGO_SETTINGS_MODULE=config.settings
+      - ENV_MODE=production
+      - DEBUG=False
       - CELERY_BROKER_URL=redis://horizon-router-redis:6379/0
       - CELERY_RESULT_BACKEND=redis://horizon-router-redis:6379/0
     command: celery -A config.celery.app beat --loglevel=INFO
