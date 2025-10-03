@@ -1,8 +1,8 @@
 import logging
 import time
 from datetime import datetime
+import pytz
 
-from django.conf import settings
 from rest_framework.decorators import api_view
 from cerberus import Validator
 from core.helpers.response import response
@@ -14,6 +14,38 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
 logger = logging.getLogger("horizon")
+
+
+def convert_events_to_utc(events, source_date):
+    gmt_plus_2 = pytz.timezone("Europe/Berlin")
+    utc = pytz.UTC
+
+    for event in events:
+        if event.get("time") and event.get("time").strip():
+            try:
+                time_str = event["time"].strip()
+                if time_str.lower() in ["all day", "tentative", ""]:
+                    continue
+
+                time_parts = time_str.replace("am", " AM").replace("pm", " PM")
+
+                datetime_str = f"{source_date} {time_parts}"
+                naive_datetime = datetime.strptime(datetime_str, "%Y-%m-%d %I:%M %p")
+
+                gmt2_datetime = gmt_plus_2.localize(naive_datetime)
+                utc_datetime = gmt2_datetime.astimezone(utc)
+
+                event["date"] = utc_datetime.strftime("%Y-%m-%d")
+                event["time"] = utc_datetime.strftime("%H:%M")
+                event["timezone"] = "UTC"
+
+            except (ValueError, AttributeError) as e:
+                logger.warning(
+                    f"Could not convert time '{event.get('time')}' for event: {e}"
+                )
+                continue
+
+    return events
 
 
 def setup_chrome_driver():
@@ -185,6 +217,7 @@ def get_forex_events(request):
         parsed_date = datetime.strptime(date, "%Y-%m-%d")
         forex_date_str = parsed_date.strftime("%b%d.%Y").lower()
         events = scrape_events_for_date(forex_date_str)
+        events = convert_events_to_utc(events, date)
 
         return response(
             message="Forex events retrieved successfully",
