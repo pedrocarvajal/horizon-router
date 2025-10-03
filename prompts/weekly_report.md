@@ -1,10 +1,5 @@
 # Weekly Trading Account Report Generator
 
-## Variables
-
-Today is: {today}
-
-
 Use this reference to calculate the current week's date range (Monday to Sunday) for data analysis.
 
 ## Objective
@@ -34,10 +29,14 @@ Generate a weekly account performance report by analyzing trading data from snap
 
 ## Output Format
 
-Generate ONLY a natural, flowing Telegram message with this content:
+Generate ONLY a natural, flowing Telegram message with this content **IN SPANISH**:
 
 ```
-This week from [start date] to [end date] we had a [positive/negative] performance with a total profit/loss of $[amount] representing [percentage]% change. We started the week with $[amount] and ended with $[amount]. Our best trade was $[amount] profit on [symbol] while our worst trade was $[amount] loss on [symbol]. In total we executed [number] trades this week. Our account now shows $[amount] with a total accumulated profit of $[amount] since inception, which represents [percentage]% growth overall.
+Esta semana del [fecha inicial] al [fecha final] tuvimos un rendimiento [positivo/negativo] con una ganancia/pérdida total de $[amount] representando un cambio del [percentage]%, Comenzamos la semana con $[amount] y terminamos con $[amount] por lo que nuestro mejor trade fue una ganancia de $[amount] en [symbol] mientras que nuestro peor trade fue una pérdida de $[amount] en [symbol]. 
+
+En total ejecutamos [número] trades esta semana, la cuenta ahora esta en $[amount] con una ganancia acumulada total de $[amount] desde el inicio, lo que representa un crecimiento del [percentage]% general.
+
+- P
 ```
 
 ## Message Tone Guidelines
@@ -62,9 +61,9 @@ This week from [start date] to [end date] we had a [positive/negative] performan
 
 ## Error Handling
 
-- If no data available, return: "No sufficient data available to generate weekly report"
-- If API errors occur, return: "Error accessing account data"
+- If no data available, return: "No hay suficientes datos disponibles para generar el reporte semanal"
+- If API errors occur, return: "Error accediendo a los datos de la cuenta"
 
 ## Final Message Only
 
-Return ONLY the formatted Telegram message. No explanations, instructions, or additional text.
+Return ONLY the formatted Telegram message **IN SPANISH**. No explanations, instructions, or additional text.

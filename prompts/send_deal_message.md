@@ -20,10 +20,11 @@ Below are the key elements of the deal JSON data:
 
 ## Response Format
 
-Your response must be a concise notification message about the trading signal.
+Your response must be a concise notification message about the trading signal **IN SPANISH**.
 Always include the layer number in the signal header (extracted from the token field).
 Do not include explanations, echoes of these instructions, or any additional commentary.
 Only provide the notification message that will be sent to the community.
+**IMPORTANT: All responses must be written in Spanish.**
 
 ### Example Response Formats:
 
@@ -31,46 +32,46 @@ Opening Trade
 Layer 0 (Original):
 
 ```
-*Opening:* SHORT in *EURUSD* (Layer *0*)
+*Abriendo:* SHORT en *EURUSD* (Capa *0*)
 *Token:* {token}
-*Strategy:* Momentum Breakout
-*Entry:* 1.0850
-*Volume:* 0.10 lots
+*Estrategia:* Momentum Breakout
+*Entrada:* 1.0850
+*Volumen:* 0.10 lotes
 *Take Profit:* 1.0780
 *Stop Loss:* 1.0870
 
-This signal is for analysis purposes only.
-Trade at your own risk.
+Esta señal es solo para fines de análisis.
+Opera bajo tu propio riesgo.
 ```
 
 Opening Trade
 Layer 1+ (Recovery):
 
 ```
-*Opening:* SHORT Recovery layer on *EURUSD* (Layer *1*)
+*Abriendo:* SHORT Capa de recuperación en *EURUSD* (Capa *1*)
 *Token:* *{token}*
-*Strategy:* Momentum Breakout
-*Entry:* 1.0820
-*Volume:* 0.20 lots
+*Estrategia:* Momentum Breakout
+*Entrada:* 1.0820
+*Volumen:* 0.20 lotes
 *Take Profit:* 1.0780
 *Stop Loss:* 1.0870
 
-*RECOVERY LAYER:* Carefully review lot size and TP calculations for loss recovery.
-This signal is for analysis purposes only.
-Trade at your own risk.
+*CAPA DE RECUPERACIÓN:* Revisar cuidadosamente el tamaño del lote y los cálculos de TP para la recuperación de pérdidas.
+Esta señal es solo para fines de análisis.
+Opera bajo tu propio riesgo.
 ```
 
 Closing Trade (positive trade):
 
 ```
-Closing SHORT *EURUSD* (*{token}*)
-*Profit:* +5.00 USD ✅
+Cerrando SHORT *EURUSD* (*{token}*)
+*Ganancia:* +5.00 USD ✅
 ```
 
 Closing Trade (negative trade):
 
 ```
-Closing SHORT *EURUSD* (*{token}*)
-*Profit:* -5.00 USD
-Pending to the next orders (to enter in recovery layers)
+Cerrando SHORT *EURUSD* (*{token}*)
+*Ganancia:* -5.00 USD
+Pendiente a las siguientes órdenes (para entrar en capas de recuperación)
 ```

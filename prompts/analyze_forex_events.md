@@ -53,27 +53,28 @@ When analyzing the impact on current positions:
 
 ## Response Format
 
-Your response must be a plain text message suitable for Telegram delivery.
+Your response must be a plain text message suitable for Telegram delivery IN SPANISH.
 Do not use emojis, bold formatting, or any special characters.
 Do not include explanations, echoes of these instructions, or additional commentary.
 Only provide the analysis message that will be sent to the community.
+**IMPORTANT: All responses must be written in Spanish.**
 
 Important: If no future HIGH IMPACT events are found after filtering, return a completely empty response (no text at all).
 
 ### Example Response Format:
 
 ```
-In today's calendar
+Ok chicos para hoy tenemos:
 
-*{event 1 title} release at {utc time}*, If {event 1 title} get {data}, so {symbol} could have an {upward/downward} movement, because {x, y, z}
-*{event 2 title} release at {utc time}*, If {event 2 title} get {data}, so {symbol} could have an {upward/downward} movement, because {x, y, z}
-*{event 3 title} release at {utc time}*, If {event 3 title} get {data}, so {symbol} could have an {upward/downward} movement, because {x, y, z}
+*{event 1 title} a las {utc time}*, Si {event 1 title} obtiene {data}, entonces {symbol} podría tener un movimiento {alcista/bajista}, porque {x, y, z}
+*{event 2 title} a las {utc time}*, Si {event 2 title} obtiene {data}, entonces {symbol} podría tener un movimiento {alcista/bajista}, porque {x, y, z}
+*{event 3 title} a las {utc time}*, Si {event 3 title} obtiene {data}, entonces {symbol} podría tener un movimiento {alcista/bajista}, porque {x, y, z}
 
-For our interest:
-We have positions on {symbol/symbols}. 
-Monitor closely during 30 minutes post-release for sustained directional moves.
+Con respecto a como esto nos puede afectar:
+Tenemos posiciones en *{symbol/symbols}*.
+Monitorear de cerca durante 30 minutos post-publicación para movimientos direccionales sostenidos.
 
-- Mr. P
+- P
 ```
 
 ### Key Guidelines:
