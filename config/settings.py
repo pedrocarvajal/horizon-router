@@ -64,19 +64,29 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": os.getenv("MYSQL_DATABASE", "horizon_router"),
-        "USER": os.getenv("MYSQL_USER", "horizon-router"),
-        "PASSWORD": os.getenv("MYSQL_PASSWORD", "horizon-router"),
-        "HOST": os.getenv("MYSQL_HOST", "horizon-router-mysql"),
-        "PORT": os.getenv("INT_PORT_MYSQL", "3306"),
-        "OPTIONS": {
-            "charset": "utf8mb4",
-        },
+import sys
+
+if "test" in sys.argv:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": ":memory:",
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.mysql",
+            "NAME": os.getenv("MYSQL_DATABASE", "horizon_router"),
+            "USER": os.getenv("MYSQL_USER", "horizon-router"),
+            "PASSWORD": os.getenv("MYSQL_PASSWORD", "horizon-router"),
+            "HOST": os.getenv("MYSQL_HOST", "horizon-router-mysql"),
+            "PORT": os.getenv("INT_PORT_MYSQL", "3306"),
+            "OPTIONS": {
+                "charset": "utf8mb4",
+            },
+        }
+    }
 
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
@@ -126,6 +136,9 @@ API_KEY_SECRET = os.getenv("API_KEY_SECRET", "horizon-router-api-key")
 API_KEY_HEADER_NAME = os.getenv("API_KEY_HEADER_NAME", "X-API-Key")
 API_KEY_EXEMPT_PATH_PREFIXES = []
 API_KEY_EXEMPT_EXACT_PATHS = ["/"]
+
+N8N_API_KEY_SECRET = os.getenv("N8N_API_KEY_SECRET", "horizon-router-api-key")
+N8N_API_KEY_HEADER_NAME = os.getenv("N8N_API_KEY_HEADER_NAME", "X-N8n-token")
 
 ENV_MODE = os.getenv("ENV_MODE", "development")
 
