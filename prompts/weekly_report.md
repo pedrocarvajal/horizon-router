@@ -3,7 +3,6 @@
 ## Variables
 
 Today is: {today}
-Broker account number (`broker_account_number`) is: 3000085718
 
 
 Use this reference to calculate the current week's date range (Monday to Sunday) for data analysis.
