@@ -65,23 +65,20 @@ Important: If no future HIGH IMPACT events are found after filtering, return a c
 ```
 In today's calendar
 
-Non-Farm Employment Change release at 14:30 UTC
-Expected impact on USD pairs - potential high volatility window
-
-Scenarios:
-- Strong data: USD strength likely, bearish pressure on EURUSD, GBPUSD
-- Weak data: USD weakness expected, bullish momentum for EURUSD, GBPUSD
+*{event 1 title} release at {utc time}*, If {event 1 title} get {data}, so {symbol} could have an {upward/downward} movement, because {x, y, z}
+*{event 2 title} release at {utc time}*, If {event 2 title} get {data}, so {symbol} could have an {upward/downward} movement, because {x, y, z}
+*{event 3 title} release at {utc time}*, If {event 3 title} get {data}, so {symbol} could have an {upward/downward} movement, because {x, y, z}
 
 For our interest:
-We have position on EURUSD Long 0.10 lots: Risk if NFP strong, opportunity if weak
-We have position on GBPUSD Short 0.05 lots: Opportunity if NFP strong, risk if weak
+We have positions on {symbol/symbols}. 
 Monitor closely during 30 minutes post-release for sustained directional moves.
+
+- Mr. P
 ```
 
 ### Key Guidelines:
 
 - Only analyze HIGH IMPACT events scheduled AFTER {today}
-- Maximum 4 future events - ignore additional events beyond this limit
 - Return empty response if no future HIGH IMPACT events exist
 - Focus on fundamental impact, not price predictions
 - Relate analysis to current open positions when provided
