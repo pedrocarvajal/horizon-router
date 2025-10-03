@@ -1,4 +1,5 @@
 import json
+import logging
 from datetime import datetime
 from rest_framework.decorators import api_view
 from cerberus import Validator
@@ -8,6 +9,9 @@ from core.models.account import Account
 from core.helpers.response import response
 from core.enums.deal import DealTypes, DealDirections
 from core.serializers.deal import DealSerializer
+from core.services.n8n_deals import N8NDeal
+
+logger = logging.getLogger("horizon")
 
 
 @api_view(["POST"])
@@ -134,6 +138,13 @@ def create_deal(request):
         stop_loss_price=data.get("stop_loss_price"),
         account=account,
     )
+
+    try:
+        n8n_service = N8NDeal()
+        serializer = DealSerializer(deal)
+        n8n_service.execute(params=serializer.data)
+    except Exception as e:
+        logger.error(f"Failed to send deal notification to N8N: {e}")
 
     return response(
         message="Deal created successfully",
