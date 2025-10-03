@@ -25,6 +25,7 @@ from core.controllers.snapshot import (
     update_snapshot,
     delete_snapshot,
 )
+from core.controllers.forexfactory import get_forex_events
 
 urlpatterns = [
     path("health/", health, name="health"),
@@ -49,4 +50,5 @@ urlpatterns = [
     path(
         "snapshots/<int:snapshot_id>/delete/", delete_snapshot, name="delete_snapshot"
     ),
+    path("forexfactory/events/", get_forex_events, name="get_forex_events"),
 ]
