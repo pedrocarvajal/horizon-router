@@ -145,10 +145,27 @@ def create_deal(request):
 @api_view(["GET"])
 def search_deals(request):
     deal_id = request.GET.get("id")
+    open_deals = request.GET.get("open_deals")
     deals = Deal.objects.select_related("strategy", "account")
 
     if deal_id:
         deals = deals.filter(id=deal_id)
+
+    elif open_deals == "1":
+        tokens_with_in = (
+            Deal.objects.filter(direction=DealDirections.IN)
+            .values_list("token", flat=True)
+            .distinct()
+        )
+
+        tokens_with_out = (
+            Deal.objects.filter(direction=DealDirections.OUT)
+            .values_list("token", flat=True)
+            .distinct()
+        )
+        
+        open_tokens = set(tokens_with_in) - set(tokens_with_out)
+        deals = deals.filter(token__in=open_tokens, direction=DealDirections.IN)
     else:
         deals = deals.all()
 

@@ -8,17 +8,14 @@ logger = logging.getLogger("horizon")
 
 class N8NDeal:
     def __init__(self):
-        self.testing_url = "https://n8n-n8n.ezf7mg.easypanel.host/webhook-test/950cca07-5138-40bd-9e6e-0372f03833b4"
-        self.production_url = "https://n8n-n8n.ezf7mg.easypanel.host/webhook/950cca07-5138-40bd-9e6e-0372f03833b4"
+        self.api_url = "https://n8n-n8n.ezf7mg.easypanel.host/webhook/950cca07-5138-40bd-9e6e-0372f03833b4"
         self.api_key = settings.N8N_API_KEY_SECRET
         self.header_name = settings.N8N_API_KEY_HEADER_NAME
         self.env_mode = settings.ENV_MODE
 
     @property
     def base_url(self) -> str:
-        return (
-            self.production_url if self.env_mode == "production" else self.testing_url
-        )
+        return self.api_url
 
     def _get_headers(self) -> Dict[str, str]:
         return {self.header_name: self.api_key, "Content-Type": "application/json"}

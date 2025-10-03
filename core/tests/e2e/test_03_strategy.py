@@ -1,9 +1,16 @@
 from django.test import SimpleTestCase
 from core.tests.e2e.helpers.request import request
 from core.tests.e2e.helpers.create_test_strategy import create_test_strategy
+from core.tests.e2e.helpers.delete_test_strategy import delete_test_strategy_by_prefix
 
 
 class StrategyControllerE2ETest(SimpleTestCase):
+    def tearDown(self):
+        delete_test_strategy_by_prefix("TST")
+        delete_test_strategy_by_prefix("STS")
+        delete_test_strategy_by_prefix("UTS")
+        delete_test_strategy_by_prefix("DTS")
+
     def test_create_strategy_success(self):
         payload = {
             "name": "Test Strategy E2E",

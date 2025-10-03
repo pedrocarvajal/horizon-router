@@ -1,9 +1,18 @@
 from django.test import SimpleTestCase
 from core.tests.e2e.helpers.request import request
 from core.tests.e2e.helpers.create_test_account import create_test_account
+from core.tests.e2e.helpers.delete_test_account import (
+    delete_test_account_by_broker_number,
+)
 
 
 class AccountControllerE2ETest(SimpleTestCase):
+    def tearDown(self):
+        delete_test_account_by_broker_number("987654321")
+        delete_test_account_by_broker_number("111222333")
+        delete_test_account_by_broker_number("444555666")
+        delete_test_account_by_broker_number("777888999")
+
     def test_create_account_success(self):
         payload = {
             "name": "Test Account E2E",
