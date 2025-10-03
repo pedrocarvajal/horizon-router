@@ -83,6 +83,7 @@ services:
       - horizon-router-app
       - horizon-router-mysql
       - horizon-router-redis
+      - horizon-router-selenium-chrome
     env_file:
       - .env
     environment:
@@ -91,6 +92,9 @@ services:
       - DEBUG=False
       - CELERY_BROKER_URL=redis://horizon-router-redis:6379/0
       - CELERY_RESULT_BACKEND=redis://horizon-router-redis:6379/0
+      - USE_REMOTE_SELENIUM=true
+      - SELENIUM_HOST=horizon-router-selenium-chrome
+      - SELENIUM_PORT=4444
     command: celery -A config.celery.app worker --loglevel=INFO --concurrency=3 --max-tasks-per-child=1000
     restart: unless-stopped
     volumes:
@@ -122,6 +126,25 @@ services:
     restart: unless-stopped
     volumes:
       - ./logs:/app/logs
+    networks:
+      - horizon-router-local
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  horizon-router-selenium-chrome:
+    image: seleniarm/standalone-chromium:latest
+    container_name: horizon-router-selenium-chrome
+    ports:
+      - "${EXT_PORT_SELENIUM:-4444}:${INT_PORT_SELENIUM:-4444}"
+    shm_size: 2gb
+    environment:
+      - SE_NODE_MAX_SESSIONS=5
+      - SE_NODE_SESSION_TIMEOUT=300
+      - TZ=UTC
+    restart: unless-stopped
     networks:
       - horizon-router-local
     logging:

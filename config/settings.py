@@ -149,6 +149,18 @@ INT_PORT_REDIS = os.getenv("INT_PORT_REDIS", "6379")
 EXT_PORT_APP = os.getenv("EXT_PORT_APP", "8000")
 EXT_PORT_MYSQL = os.getenv("EXT_PORT_MYSQL", "3306")
 EXT_PORT_REDIS = os.getenv("EXT_PORT_REDIS", "6379")
+EXT_PORT_SELENIUM = os.getenv("EXT_PORT_SELENIUM", "4444")
+
+INT_PORT_SELENIUM = os.getenv("INT_PORT_SELENIUM", "4444")
+
+USE_REMOTE_SELENIUM = os.getenv("USE_REMOTE_SELENIUM", "false").lower() in (
+    "true",
+    "1",
+    "yes",
+)
+SELENIUM_HOST = os.getenv("SELENIUM_HOST", "localhost")
+SELENIUM_PORT = os.getenv("SELENIUM_PORT", "4444")
+SELENIUM_URL = f"http://{SELENIUM_HOST}:{SELENIUM_PORT}/wd/hub"
 
 LOGGING = {
     "version": 1,

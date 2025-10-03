@@ -18,6 +18,10 @@ services:
     tty: true
 
   horizon-router-celery-worker:
+    environment:
+      - USE_REMOTE_SELENIUM=true
+      - SELENIUM_HOST=horizon-router-selenium-chrome
+      - SELENIUM_PORT=4444
     volumes:
       - .:/app
       - ./logs:/app/logs
@@ -27,3 +31,10 @@ services:
     volumes:
       - .:/app
       - ./logs:/app/logs
+
+  horizon-router-selenium-chrome:
+    ports:
+      - "${EXT_PORT_SELENIUM:-4444}:${INT_PORT_SELENIUM:-4444}"
+    environment:
+      - SE_NODE_MAX_SESSIONS=10
+      - SE_NODE_SESSION_TIMEOUT=600
