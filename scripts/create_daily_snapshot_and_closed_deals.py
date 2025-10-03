@@ -3,7 +3,6 @@
 import requests
 import json
 from datetime import datetime
-import uuid
 
 
 def make_request(endpoint, payload):
@@ -33,9 +32,9 @@ def create_snapshot():
     payload = {
         "broker_account_number": "52506938",
         "strategy_prefix": None,
-        "event": f"END_OF_DAY_REPORT_{datetime.now().strftime('%Y%m%d')}",
-        "balance": "15847.23",
-        "nav": "15912.45",
+        "event": "END_OF_DAY_REPORT",
+        "balance": "100000",
+        "nav": "100000",
         "exposure": "2.15",
     }
 
@@ -59,49 +58,34 @@ def create_snapshot():
 def create_closed_deals():
     deals = [
         {
-            "token": f"EURUSD_CLOSED_{uuid.uuid4().hex[:8]}",
+            "token": "EURUSD.EHB_0_1a22d2ds",
             "strategy_prefix": "EURUSD.EHB",
             "strategy_name": "EURUSD.EHighBreakout",
             "time": datetime.now().replace(hour=8, minute=30).isoformat() + "Z",
             "symbol": "EURUSD",
             "type": 1,
-            "direction": 1,
+            "direction": 0,
             "volume": 0.1,
             "price": 1.0845,
-            "profit": 45.80,
+            "profit": 0,
             "take_profit_price": None,
             "stop_loss_price": None,
-            "broker_account_number": "52506938",
+            "broker_account_number": "3000085718",
         },
         {
-            "token": f"GBPUSD_CLOSED_{uuid.uuid4().hex[:8]}",
-            "strategy_prefix": "GBPUSD.EHB",
-            "strategy_name": "GBPUSD.EHighBreakout",
+            "token": "EURUSD.EHB_0_1a22d2ds",
+            "strategy_prefix": "EURUSD.EHB",
+            "strategy_name": "EURUSD.EHighBreakout",
             "time": datetime.now().replace(hour=11, minute=15).isoformat() + "Z",
-            "symbol": "GBPUSD",
+            "symbol": "EURUSD",
             "type": 0,
             "direction": 1,
-            "volume": 0.05,
-            "price": 1.3102,
-            "profit": -23.50,
+            "volume": 0.1,
+            "price": 1.0846,
+            "profit": 23.50,
             "take_profit_price": None,
             "stop_loss_price": None,
-            "broker_account_number": "52506938",
-        },
-        {
-            "token": f"XAUUSD_CLOSED_{uuid.uuid4().hex[:8]}",
-            "strategy_prefix": "XAUUSD.EHB",
-            "strategy_name": "XAUUSD.EHighBreakout",
-            "time": datetime.now().replace(hour=14, minute=45).isoformat() + "Z",
-            "symbol": "XAUUSD",
-            "type": 0,
-            "direction": 1,
-            "volume": 0.01,
-            "price": 2655.75,
-            "profit": 127.30,
-            "take_profit_price": None,
-            "stop_loss_price": None,
-            "broker_account_number": "52506938",
+            "broker_account_number": "3000085718",
         },
     ]
 
