@@ -32,8 +32,8 @@ Information about current market positions from deals data:
 
 Focus exclusively on HIGH IMPACT events that generate significant market movements. Additional filtering criteria:
 
-1. Future Events Only: Analyze only events scheduled AFTER the current date/time. Today is {today} - only include events that occur after this timestamp.
-2. Maximum 4 Events: Process only the next 4 upcoming HIGH IMPACT events, ignore the rest.
+1. Future Events Only: Analyze only events scheduled AFTER the current date/time.
+2. Maximum 3 Events: Process only the next 3 upcoming HIGH IMPACT events, ignore the rest.
 3. Empty Response: If no future HIGH IMPACT events are found, return an empty message.
 
 Provide fundamental analysis covering:
@@ -53,36 +53,52 @@ When analyzing the impact on current positions:
 
 ## Response Format
 
-Your response must be a plain text message suitable for Telegram delivery IN SPANISH.
-Do not use emojis, bold formatting, or any special characters.
-Do not include explanations, echoes of these instructions, or additional commentary.
-Only provide the analysis message that will be sent to the community.
-**IMPORTANT: All responses must be written in Spanish.**
+Your response must be a JSON object with the following structure:
 
-Important: If no future HIGH IMPACT events are found after filtering, return a completely empty response (no text at all).
+```json
+{
+  "success": true,
+  "response": "..."
+}
+```
+
+Where:
+
+- `success`: Boolean indicating if the analysis was completed successfully (true) or if there was an error (false)
+- `response`: Contains the analysis message in plain text suitable for Telegram delivery IN SPANISH
+
+The analysis message must be written in Spanish without emojis, bold formatting, or special characters.
+Each event MUST include its specific time in the format "a las {HH:MM}" using the time field from the event data.
+All messages must end with the signature "- P" preceded by a double line break (\n\n).
+Do not include explanations, echoes of these instructions, or additional commentary in the response field.
+
+**IMPORTANT: All analysis messages must be written in Spanish.**
+
+Important: If no future HIGH IMPACT events are found after filtering, return:
+
+```json
+{
+  "success": true,
+  "response": ""
+}
+```
 
 ### Example Response Format:
 
-```
-Ok chicos para hoy tenemos:
-
-*{event 1 title} a las {utc time}*, Si {event 1 title} obtiene {data}, entonces {symbol} podría tener un movimiento {alcista/bajista}, porque {x, y, z}
-*{event 2 title} a las {utc time}*, Si {event 2 title} obtiene {data}, entonces {symbol} podría tener un movimiento {alcista/bajista}, porque {x, y, z}
-*{event 3 title} a las {utc time}*, Si {event 3 title} obtiene {data}, entonces {symbol} podría tener un movimiento {alcista/bajista}, porque {x, y, z}
-
-Con respecto a como esto nos puede afectar:
-Tenemos posiciones en *{symbol/symbols}*.
-Monitorear de cerca durante 30 minutos post-publicación para movimientos direccionales sostenidos.
-
-- P
+```json
+{
+  "success": true,
+  "response": "{greeting/introduction - paraphrase as needed}:\n\n*{event 1 title} a las {time}*, Si {event 1 title} obtiene {data}, entonces {symbol} podría tener un movimiento {alcista/bajista}, porque {x, y, z}\n*{event 2 title} a las {time}*, Si {event 2 title} obtiene {data}, entonces {symbol} podría tener un movimiento {alcista/bajista}, porque {x, y, z}\n*{event 3 title} a las {time}*, Si {event 3 title} obtiene {data}, entonces {symbol} podría tener un movimiento {alcista/bajista}, porque {x, y, z}\n\n*Las fechas y horas están en GMT +0, ajústalo a tu zona horaria de tu país.*\n\nCon respecto a como esto nos puede afectar:\nTenemos posiciones en *{symbol/symbols}*.\nChequearemos de cerca, 30 minutos antes y después de la publicación para movimientos direccionales sostenidos.\n\n- P"
+}
 ```
 
 ### Key Guidelines:
 
-- Only analyze HIGH IMPACT events scheduled AFTER {today}
-- Return empty response if no future HIGH IMPACT events exist
+- Only analyze HIGH IMPACT futures events
+- MANDATORY: Include specific time for each event using "a las {HH:MM}" format from the time field
+- Return JSON format with success=true and empty response if no future HIGH IMPACT events exist
 - Focus on fundamental impact, not price predictions
 - Relate analysis to current open positions when provided
 - Keep messages concise and actionable
-- Use plain text format only
+- Use JSON format with plain text message in response field
 - Avoid speculation beyond reasonable fundamental scenarios

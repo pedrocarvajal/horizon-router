@@ -29,10 +29,22 @@ Generate a weekly account performance report by analyzing trading data from snap
 
 ## Output Format
 
-Generate ONLY a natural, flowing Telegram message with this content **IN SPANISH**:
+Generate ONLY a JSON object with the following structure:
+
+```json
+{
+  "success": true,
+  "response": "..."
+}
+```
+
+Where:
+
+- `success`: Boolean indicating if the report was generated successfully (true) or if there was an error (false)
+- `response`: Contains a natural, flowing Telegram message with this content **IN SPANISH**:
 
 ```
-Esta semana del [fecha inicial] al [fecha final] tuvimos un rendimiento [positivo/negativo] con una ganancia/pérdida total de $[amount] representando un cambio del [percentage]%, Comenzamos la semana con $[amount] y terminamos con $[amount] por lo que nuestro mejor trade fue una ganancia de $[amount] en [symbol] mientras que nuestro peor trade fue una pérdida de $[amount] en [symbol]. 
+Esta semana del [fecha inicial] al [fecha final] tuvimos un rendimiento [positivo/negativo] con una ganancia/pérdida total de $[amount] representando un cambio del [percentage]%, Comenzamos la semana con $[amount] y terminamos con $[amount] por lo que nuestro mejor trade fue una ganancia de $[amount] en [symbol] mientras que nuestro peor trade fue una pérdida de $[amount] en [symbol].
 
 En total ejecutamos [número] trades esta semana, la cuenta ahora esta en $[amount] con una ganancia acumulada total de $[amount] desde el inicio, lo que representa un crecimiento del [percentage]% general.
 
@@ -48,6 +60,7 @@ En total ejecutamos [número] trades esta semana, la cuenta ahora esta en $[amou
 - Direct community notification style
 - Feel free to paraphrase and rearrange the message structure to create natural variation
 - Each report should sound unique while maintaining all essential information
+- All messages must end with the signature "- P" preceded by a double line break
 
 ## Calculation Requirements
 
@@ -61,9 +74,24 @@ En total ejecutamos [número] trades esta semana, la cuenta ahora esta en $[amou
 
 ## Error Handling
 
-- If no data available, return: "No hay suficientes datos disponibles para generar el reporte semanal"
-- If API errors occur, return: "Error accediendo a los datos de la cuenta"
+- If no data available, return:
 
-## Final Message Only
+```json
+{
+  "success": false,
+  "response": "No hay suficientes datos disponibles para generar el reporte semanal"
+}
+```
 
-Return ONLY the formatted Telegram message **IN SPANISH**. No explanations, instructions, or additional text.
+- If API errors occur, return:
+
+```json
+{
+  "success": false,
+  "response": "Error accediendo a los datos de la cuenta"
+}
+```
+
+## Final JSON Response Only
+
+Return ONLY the JSON object with the formatted Telegram message **IN SPANISH**. No explanations, instructions, or additional text.

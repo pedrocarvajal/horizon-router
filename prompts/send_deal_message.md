@@ -20,58 +20,58 @@ Below are the key elements of the deal JSON data:
 
 ## Response Format
 
-Your response must be a concise notification message about the trading signal **IN SPANISH**.
+Your response must be a JSON object with the following structure:
+
+```json
+{
+  "success": true,
+  "response": "..."
+}
+```
+
+Where:
+
+- `success`: Boolean indicating if the message was generated successfully (true) or if there was an error (false)
+- `response`: Contains the concise notification message about the trading signal **IN SPANISH**
+
 Always include the layer number in the signal header (extracted from the token field).
-Do not include explanations, echoes of these instructions, or any additional commentary.
-Only provide the notification message that will be sent to the community.
-**IMPORTANT: All responses must be written in Spanish.**
+Do not include explanations, echoes of these instructions, or any additional commentary in the response field.
+**IMPORTANT: All notification messages must be written in Spanish.**
 
 ### Example Response Formats:
 
-Opening Trade
-Layer 0 (Original):
+Opening Trade Layer 0 (Original):
 
-```
-*Abriendo:* SHORT en *EURUSD* (Capa *0*)
-*Token:* {token}
-*Estrategia:* Momentum Breakout
-*Entrada:* 1.0850
-*Volumen:* 0.10 lotes
-*Take Profit:* 1.0780
-*Stop Loss:* 1.0870
-
-Esta señal es solo para fines de análisis.
-Opera bajo tu propio riesgo.
+```json
+{
+  "success": true,
+  "response": "*Abriendo:* SHORT en *EURUSD* (Capa *0*)\n*Token:* {token}\n*Estrategia:* Momentum Breakout\n*Entrada:* 1.0850\n*Volumen:* 0.10 lotes\n*Take Profit:* 1.0780\n*Stop Loss:* 1.0870\n\nEsta señal es solo para fines de análisis.\nOpera bajo tu propio riesgo."
+}
 ```
 
-Opening Trade
-Layer 1+ (Recovery):
+Opening Trade Layer 1+ (Recovery):
 
-```
-*Abriendo:* SHORT Capa de recuperación en *EURUSD* (Capa *1*)
-*Token:* *{token}*
-*Estrategia:* Momentum Breakout
-*Entrada:* 1.0820
-*Volumen:* 0.20 lotes
-*Take Profit:* 1.0780
-*Stop Loss:* 1.0870
-
-*CAPA DE RECUPERACIÓN:* Revisar cuidadosamente el tamaño del lote y los cálculos de TP para la recuperación de pérdidas.
-Esta señal es solo para fines de análisis.
-Opera bajo tu propio riesgo.
+```json
+{
+  "success": true,
+  "response": "*Abriendo:* SHORT Capa de recuperación en *EURUSD* (Capa *1*)\n*Token:* *{token}*\n*Estrategia:* Momentum Breakout\n*Entrada:* 1.0820\n*Volumen:* 0.20 lotes\n*Take Profit:* 1.0780\n*Stop Loss:* 1.0870\n\n*CAPA DE RECUPERACIÓN:* Revisar cuidadosamente el tamaño del lote y los cálculos de TP para la recuperación de pérdidas.\nEsta señal es solo para fines de análisis.\nOpera bajo tu propio riesgo."
+}
 ```
 
 Closing Trade (positive trade):
 
-```
-Cerrando SHORT *EURUSD* (*{token}*)
-*Ganancia:* +5.00 USD ✅
+```json
+{
+  "success": true,
+  "response": "Cerrando SHORT *EURUSD* (*{token}*)\n*Ganancia:* +5.00 USD ✅"
+}
 ```
 
 Closing Trade (negative trade):
 
-```
-Cerrando SHORT *EURUSD* (*{token}*)
-*Ganancia:* -5.00 USD
-Pendiente a las siguientes órdenes (para entrar en capas de recuperación)
+```json
+{
+  "success": true,
+  "response": "Cerrando SHORT *EURUSD* (*{token}*)\n*Ganancia:* -5.00 USD\nPendiente a las siguientes órdenes (para entrar en capas de recuperación)"
+}
 ```
