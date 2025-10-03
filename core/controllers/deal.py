@@ -139,12 +139,13 @@ def create_deal(request):
         account=account,
     )
 
-    try:
-        n8n_service = N8NDeal()
-        serializer = DealSerializer(deal)
-        n8n_service.execute(params=serializer.data)
-    except Exception as e:
-        logger.error(f"Failed to send deal notification to N8N: {e}")
+    if "test" not in data["token"].lower():
+        try:
+            n8n_service = N8NDeal()
+            serializer = DealSerializer(deal)
+            n8n_service.execute(params=serializer.data)
+        except Exception as e:
+            logger.error(f"Failed to send deal notification to N8N: {e}")
 
     return response(
         message="Deal created successfully",
