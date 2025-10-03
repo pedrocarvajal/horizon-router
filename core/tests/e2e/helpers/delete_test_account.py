@@ -15,10 +15,11 @@ def delete_test_account_by_broker_number(broker_account_number):
         endpoint="/api/accounts/search/",
     )
 
+    deleted_count = 0
     if status == 200:
         accounts = response_data.get("data", [])
         for account in accounts:
             if account.get("broker_account_number") == broker_account_number:
-                delete_test_account(account["id"])
-                return True
-    return False
+                if delete_test_account(account["id"]):
+                    deleted_count += 1
+    return deleted_count > 0

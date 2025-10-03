@@ -17,7 +17,7 @@ class DealControllerE2ETest(SimpleTestCase):
         if status == 200:
             for deal in response_data.get("data", []):
                 if deal.get("token", "").startswith(
-                    ("create_test_", "open_test_", "test_token_")
+                    ("create_test_", "open_test_", "test_token_", "close_test_")
                 ):
                     request(
                         method="DELETE", endpoint=f"/api/deals/{deal['id']}/delete/"
@@ -26,9 +26,11 @@ class DealControllerE2ETest(SimpleTestCase):
         delete_test_strategy_by_prefix("CDS")
         delete_test_strategy_by_prefix("TDS")
         delete_test_strategy_by_prefix("ODS")
+        delete_test_strategy_by_prefix("CLS")
         delete_test_account_by_broker_number("54321")
         delete_test_account_by_broker_number("12345")
         delete_test_account_by_broker_number("98765")
+        delete_test_account_by_broker_number("11111")
 
     def test_create_deal_success(self):
         create_test_strategy("Create Deal Strategy", "CDS", "EURUSD")
@@ -114,3 +116,150 @@ class DealControllerE2ETest(SimpleTestCase):
         ]
 
         self.assertTrue(len(open_deals) > 0)
+
+    def test_search_close_deals_success(self):
+        create_test_strategy("Close Deal Strategy", "CLS", "EURJPY")
+        create_test_account("Close Deal Account", "11111", "Close Broker")
+
+        close_token = f"close_test_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+
+        payload_in = {
+            "token": close_token,
+            "strategy_prefix": "CLS",
+            "strategy_name": "Close Deal Strategy",
+            "time": datetime.now().isoformat() + "Z",
+            "symbol": "EURJPY",
+            "type": 0,
+            "direction": 0,
+            "volume": 0.15,
+            "price": 130.00,
+            "broker_account_number": "11111",
+        }
+
+        payload_out = {
+            "token": close_token,
+            "strategy_prefix": "CLS",
+            "strategy_name": "Close Deal Strategy",
+            "time": datetime.now().isoformat() + "Z",
+            "symbol": "EURJPY",
+            "type": 1,
+            "direction": 1,
+            "volume": 0.15,
+            "price": 130.50,
+            "profit": 7.5,
+            "broker_account_number": "11111",
+        }
+
+        request(method="POST", endpoint="/api/deals/", payload=payload_in)
+        request(method="POST", endpoint="/api/deals/", payload=payload_out)
+
+        status, response_data = request(
+            method="GET",
+            endpoint="/api/deals/search/?close_deals=1",
+        )
+
+        self.assertEqual(status, 200)
+        self.assertEqual(response_data["message"], "Deals retrieved successfully")
+        self.assertIn("data", response_data)
+        self.assertIsInstance(response_data["data"], list)
+
+        close_deals = [
+            deal for deal in response_data["data"] if deal["token"] == close_token
+        ]
+
+        self.assertTrue(len(close_deals) > 0)
+        for deal in close_deals:
+            self.assertEqual(deal["direction"], 1)
+
+    def test_search_deals_by_date_range_success(self):
+        create_test_strategy("Test Date Strategy", "TDS", "USDJPY")
+        create_test_account("Test Date Account", "12345", "Test Broker")
+
+        base_time = datetime(2025, 1, 15, 10, 0, 0)
+
+        deal1_payload = {
+            "token": f"test_token_1_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
+            "strategy_prefix": "TDS",
+            "strategy_name": "Test Date Strategy",
+            "time": base_time.isoformat() + "Z",
+            "symbol": "USDJPY",
+            "type": 0,
+            "direction": 0,
+            "volume": 0.1,
+            "price": 150.00,
+            "broker_account_number": "12345",
+        }
+
+        deal2_payload = {
+            "token": f"test_token_2_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
+            "strategy_prefix": "TDS",
+            "strategy_name": "Test Date Strategy",
+            "time": (base_time.replace(day=20)).isoformat() + "Z",
+            "symbol": "USDJPY",
+            "type": 1,
+            "direction": 0,
+            "volume": 0.2,
+            "price": 151.00,
+            "broker_account_number": "12345",
+        }
+
+        deal3_payload = {
+            "token": f"test_token_3_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
+            "strategy_prefix": "TDS",
+            "strategy_name": "Test Date Strategy",
+            "time": (base_time.replace(day=25)).isoformat() + "Z",
+            "symbol": "USDJPY",
+            "type": 0,
+            "direction": 0,
+            "volume": 0.3,
+            "price": 152.00,
+            "broker_account_number": "12345",
+        }
+
+        request(method="POST", endpoint="/api/deals/", payload=deal1_payload)
+        request(method="POST", endpoint="/api/deals/", payload=deal2_payload)
+        request(method="POST", endpoint="/api/deals/", payload=deal3_payload)
+
+        date_from = base_time.replace(day=18).isoformat() + "Z"
+        status, response_data = request(
+            method="GET",
+            endpoint=f"/api/deals/search/?date_from={date_from}",
+        )
+
+        self.assertEqual(status, 200)
+        self.assertEqual(response_data["message"], "Deals retrieved successfully")
+        date_from_deals = [
+            deal
+            for deal in response_data["data"]
+            if deal["token"].startswith("test_token_")
+        ]
+        self.assertEqual(len(date_from_deals), 2)
+
+        date_to = base_time.replace(day=22).isoformat() + "Z"
+        status, response_data = request(
+            method="GET",
+            endpoint=f"/api/deals/search/?date_to={date_to}",
+        )
+
+        self.assertEqual(status, 200)
+        date_to_deals = [
+            deal
+            for deal in response_data["data"]
+            if deal["token"].startswith("test_token_")
+        ]
+        self.assertEqual(len(date_to_deals), 2)
+
+        date_from_range = base_time.replace(day=18).isoformat() + "Z"
+        date_to_range = base_time.replace(day=22).isoformat() + "Z"
+        status, response_data = request(
+            method="GET",
+            endpoint=f"/api/deals/search/?date_from={date_from_range}&date_to={date_to_range}",
+        )
+
+        self.assertEqual(status, 200)
+        range_deals = [
+            deal
+            for deal in response_data["data"]
+            if deal["token"].startswith("test_token_")
+        ]
+        self.assertEqual(len(range_deals), 1)

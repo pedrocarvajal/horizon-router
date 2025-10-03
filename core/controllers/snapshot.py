@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from rest_framework.decorators import api_view
 from cerberus import Validator
 from core.models.snapshot import Snapshot
@@ -111,7 +112,8 @@ def search_snapshots(request):
     broker_account_number = request.GET.get("broker_account_number")
     strategy_prefix = request.GET.get("strategy_prefix")
     event = request.GET.get("event")
-
+    date_from = request.GET.get("date_from")
+    date_to = request.GET.get("date_to")
     snapshots = Snapshot.objects.all()
 
     if broker_account_number:
@@ -124,6 +126,24 @@ def search_snapshots(request):
 
     if event:
         snapshots = snapshots.filter(event__icontains=event)
+
+    if date_from:
+        try:
+            date_from_parsed = datetime.fromisoformat(date_from.replace("Z", "+00:00"))
+            snapshots = snapshots.filter(created_at__gte=date_from_parsed)
+        except ValueError:
+            return response(
+                message="Invalid date_from format. Use ISO 8601 format", status_code=400
+            )
+
+    if date_to:
+        try:
+            date_to_parsed = datetime.fromisoformat(date_to.replace("Z", "+00:00"))
+            snapshots = snapshots.filter(created_at__lte=date_to_parsed)
+        except ValueError:
+            return response(
+                message="Invalid date_to format. Use ISO 8601 format", status_code=400
+            )
 
     serializer = SnapshotSerializer(snapshots, many=True)
     snapshots_data = serializer.data

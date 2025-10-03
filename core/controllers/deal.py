@@ -146,6 +146,9 @@ def create_deal(request):
 def search_deals(request):
     deal_id = request.GET.get("id")
     open_deals = request.GET.get("open_deals")
+    close_deals = request.GET.get("close_deals")
+    date_from = request.GET.get("date_from")
+    date_to = request.GET.get("date_to")
     deals = Deal.objects.select_related("strategy", "account")
 
     if deal_id:
@@ -163,11 +166,31 @@ def search_deals(request):
             .values_list("token", flat=True)
             .distinct()
         )
-        
+
         open_tokens = set(tokens_with_in) - set(tokens_with_out)
         deals = deals.filter(token__in=open_tokens, direction=DealDirections.IN)
+    elif close_deals == "1":
+        deals = deals.filter(direction=DealDirections.OUT)
     else:
         deals = deals.all()
+
+    if date_from:
+        try:
+            date_from_parsed = datetime.fromisoformat(date_from.replace("Z", "+00:00"))
+            deals = deals.filter(time__gte=date_from_parsed)
+        except ValueError:
+            return response(
+                message="Invalid date_from format. Use ISO 8601 format", status_code=400
+            )
+
+    if date_to:
+        try:
+            date_to_parsed = datetime.fromisoformat(date_to.replace("Z", "+00:00"))
+            deals = deals.filter(time__lte=date_to_parsed)
+        except ValueError:
+            return response(
+                message="Invalid date_to format. Use ISO 8601 format", status_code=400
+            )
 
     serializer = DealSerializer(deals, many=True)
     deals_data = serializer.data
