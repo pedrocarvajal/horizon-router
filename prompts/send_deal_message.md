@@ -60,9 +60,17 @@ This signal is for analysis purposes only.
 Trade at your own risk.
 ```
 
-Closing Trade:
+Closing Trade (positive trade):
 
 ```
 Closing SHORT *EURUSD* (*{token}*)
-*Profit:* +5.00 USD
+*Profit:* +5.00 USD ✅
+```
+
+Closing Trade (negative trade):
+
+```
+Closing SHORT *EURUSD* (*{token}*)
+*Profit:* -5.00 USD
+Pending to the next orders (to enter in recovery layers)
 ```
