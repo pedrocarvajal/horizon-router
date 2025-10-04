@@ -8,8 +8,8 @@ services:
       - DJANGO_SETTINGS_MODULE=config.settings
       - API_KEY_SECRET=${API_KEY_SECRET:-horizon-router-api-key}
       - API_KEY_HEADER_NAME=${API_KEY_HEADER_NAME:-X-API-Key}
-    ports:
-      - "${EXT_PORT_APP:-8000}:${INT_PORT_APP:-8000}"
+    expose:
+      - "8000"
     restart: unless-stopped
     volumes:
       - horizon_router_logs:/app/logs
@@ -42,8 +42,8 @@ services:
     image: redis:7-alpine
     container_name: horizon-router-redis
     restart: unless-stopped
-    ports:
-      - "${EXT_PORT_REDIS:-6379}:${INT_PORT_REDIS:-6379}"
+    expose:
+      - "6379"
     networks:
       - horizon-router-local
 
@@ -92,8 +92,8 @@ services:
   horizon-router-selenium-chrome:
     image: seleniarm/standalone-chromium:latest
     container_name: horizon-router-selenium-chrome
-    ports:
-      - "${EXT_PORT_SELENIUM:-4444}:${INT_PORT_SELENIUM:-4444}"
+    expose:
+      - "4444"
     shm_size: 2gb
     environment:
       - SE_NODE_MAX_SESSIONS=5
