@@ -32,6 +32,3 @@ test:
 	make test-e2e
 	make test-integration
 	make test-unit
-
-# execute-celery-task-update_crypto_calendar_events:
-# 	docker compose exec map-celery-beat celery -A config call update_crypto_calendar_events
