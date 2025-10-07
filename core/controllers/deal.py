@@ -142,8 +142,28 @@ def create_deal(request):
     if "test" not in data["token"].lower():
         try:
             n8n_service = N8NDeal()
-            serializer = DealSerializer(deal)
-            n8n_service.execute(params=serializer.data)
+            
+            profit = deal.profit if deal.profit else None
+            take_profit_price = deal.take_profit_price
+            stop_loss_price = deal.stop_loss_price
+            n8n_payload = {
+                "id": deal.id,
+                "token": deal.token,
+                "strategy_prefix": deal.strategy.prefix,
+                "strategy_name": deal.strategy.name,
+                "time": deal.time.isoformat(),
+                "symbol": deal.symbol,
+                "type": deal.type,
+                "direction": deal.direction,
+                "volume": str(deal.volume),
+                "price": str(deal.price),
+                "profit": str(profit),
+                "take_profit_price": str(take_profit_price),
+                "stop_loss_price": str(stop_loss_price),
+                "account": deal.account.id,
+            }
+
+            n8n_service.execute(params=n8n_payload)
         except Exception as e:
             logger.error(f"Failed to send deal notification to N8N: {e}")
 
