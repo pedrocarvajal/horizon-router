@@ -142,7 +142,7 @@ def create_deal(request):
     if "test" not in data["token"].lower():
         try:
             n8n_service = N8NDeal()
-            
+
             profit = deal.profit if deal.profit else None
             take_profit_price = deal.take_profit_price
             stop_loss_price = deal.stop_loss_price
