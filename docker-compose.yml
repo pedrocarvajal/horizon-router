@@ -13,6 +13,7 @@ services:
     restart: unless-stopped
     volumes:
       - horizon_router_logs:/app/logs
+      - ./core/storage:/app/core/storage
     networks:
       - horizon-router-local
     depends_on:
@@ -67,6 +68,7 @@ services:
     restart: unless-stopped
     volumes:
       - horizon_router_logs:/app/logs
+      - ./core/storage:/app/core/storage
     networks:
       - horizon-router-local
 

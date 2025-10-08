@@ -1,8 +1,10 @@
 import logging
 import time
+import os
 from datetime import datetime
 import pytz
 
+from django.conf import settings
 from rest_framework.decorators import api_view
 from cerberus import Validator
 from core.helpers.response import response
@@ -56,7 +58,7 @@ def setup_chrome_driver():
     chrome_options.add_argument("--disable-gpu")
     chrome_options.add_argument("--disable-blink-features=AutomationControlled")
     chrome_options.add_argument("--disable-extensions")
-    chrome_options.add_argument("--window-size=1000,1080")
+    chrome_options.add_argument("--window-size=1000,1000")
     chrome_options.add_argument(
         "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     )
@@ -75,9 +77,10 @@ def setup_chrome_driver():
     return webdriver.Remote(command_executor=selenium_url, options=chrome_options)
 
 
-def scrape_events_for_date(date_str):
+def scrape_events_for_date(date_str, save_screenshot=False):
     url = f"https://www.forexfactory.com/calendar?day={date_str}"
     driver = setup_chrome_driver()
+    screenshot_path = None
 
     try:
         logger.info(f"Loading URL: {url}")
@@ -86,6 +89,27 @@ def scrape_events_for_date(date_str):
         wait = WebDriverWait(driver, 20)
         wait.until(EC.presence_of_element_located((By.CLASS_NAME, "calendar__table")))
         time.sleep(3)
+
+        if save_screenshot:
+            try:
+                calendar_div = driver.find_element(
+                    By.CSS_SELECTOR, 'div[data-id="calendar"]'
+                )
+
+                screenshot_dir = os.path.join(
+                    settings.BASE_DIR, "core", "storage", "screenshots"
+                )
+                os.makedirs(screenshot_dir, exist_ok=True)
+
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                screenshot_filename = f"forexfactory_{date_str}_{timestamp}.png"
+                screenshot_path = os.path.join(screenshot_dir, screenshot_filename)
+                calendar_div.screenshot(screenshot_path)
+
+                logger.info(f"Calendar screenshot saved: {screenshot_path}")
+            except Exception as e:
+                logger.warning(f"Failed to capture calendar screenshot: {e}")
+                screenshot_path = None
 
         events = []
         calendar_rows = driver.find_elements(By.CSS_SELECTOR, "tr[data-event-id]")
@@ -178,14 +202,14 @@ def scrape_events_for_date(date_str):
             if event.get("detail"):
                 events.append(event)
 
-        return events
+        return events, screenshot_path
 
     except TimeoutException:
         logger.error(f"Timeout loading page: {url}")
-        return []
+        return [], None
     except Exception as e:
         logger.error(f"Error scraping Forex Factory for {date_str}: {str(e)}")
-        return []
+        return [], None
     finally:
         driver.quit()
 
@@ -199,10 +223,16 @@ def get_forex_events(request):
             "empty": False,
             "regex": r"^\d{4}-\d{2}-\d{2}$",
         },
+        "screenshot": {
+            "type": "boolean",
+            "required": False,
+            "default": False,
+        },
     }
 
     validator = Validator(schema)
     date = request.GET.get("date", "")
+    screenshot = request.GET.get("screenshot", "false").lower() in ("true", "1", "yes")
 
     if not validator.validate(
         {
@@ -216,16 +246,27 @@ def get_forex_events(request):
     try:
         parsed_date = datetime.strptime(date, "%Y-%m-%d")
         forex_date_str = parsed_date.strftime("%b%d.%Y").lower()
-        events = scrape_events_for_date(forex_date_str)
+        events, screenshot_path = scrape_events_for_date(
+            forex_date_str, save_screenshot=screenshot
+        )
         events = convert_events_to_utc(events, date)
+
+        response_data = {
+            "date": date,
+            "events_count": len(events),
+            "events": events,
+        }
+
+        if screenshot_path:
+            screenshot_filename = os.path.basename(screenshot_path)
+            response_data["screenshot_url"] = (
+                f"/media/screenshots/{screenshot_filename}"
+            )
+            response_data["screenshot_path"] = screenshot_path
 
         return response(
             message="Forex events retrieved successfully",
-            data={
-                "date": date,
-                "events_count": len(events),
-                "events": events,
-            },
+            data=response_data,
         )
 
     except ValueError as e:

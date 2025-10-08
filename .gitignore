@@ -167,3 +167,6 @@ certbot/conf/*
 certbot/www/*
 !certbot/conf/.gitkeep
 !certbot/www/.gitkeep
+
+# Screenshots
+core/storage/screenshots/*
